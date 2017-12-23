@@ -108,12 +108,13 @@ public MyViewHolder(View itemView) {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu1:
+                                final Album album2 = albumList.get(position);
 
                                 Intent intent=new Intent(context,Main2Activity.class);
-                                intent.putExtra("url",album.getUrl());
-                                intent.putExtra("image",album.getCover_image());
-                                intent.putExtra("song",album.getSong());
-                                intent.putExtra("artists",album.getArtists());
+                                intent.putExtra("url",album2.getUrl());
+                                intent.putExtra("image",album2.getCover_image());
+                                intent.putExtra("song",album2.getSong());
+                                intent.putExtra("artists",album2.getArtists());
                                 context.startActivity(intent);
                                 break;
                             case R.id.menu2:

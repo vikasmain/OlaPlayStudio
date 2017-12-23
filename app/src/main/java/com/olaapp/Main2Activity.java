@@ -1,9 +1,11 @@
 package com.olaapp;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -14,8 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-
-import java.io.IOException;
 
 public class Main2Activity extends Activity implements OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
@@ -70,27 +70,22 @@ artists=intent.getStringExtra("artists");
             }
         });
         imageView=(ImageView)findViewById(R.id.ik);
-        Glide.with(getApplicationContext()).load(image).into(imageView);
+        Glide.with(Main2Activity.this).load(image).into(imageView);
         btnRepeat = (ImageButton) findViewById(R.id.btnRepeat);
         btnShuffle = (ImageButton) findViewById(R.id.btnShuffle);
         songProgressBar = (SeekBar) findViewById(R.id.songProgressBar);
         songTitleLabel = (TextView) findViewById(R.id.songTitle);
+        songTitleLabel.setText(song);
         songCurrentDurationLabel = (TextView) findViewById(R.id.songCurrentDurationLabel);
         songTotalDurationLabel = (TextView) findViewById(R.id.songTotalDurationLabel);
         artis = (TextView) findViewById(R.id.art);
         artis.setText(artists);
         // Mediaplayer
-        mp = new MediaPlayer();
-        utils = new Utilities();
+      // Important
 
-        // Listeners
-        songProgressBar.setOnSeekBarChangeListener(this); // Important
-        mp.setOnCompletionListener(this); // Important
-
-        // Getting all songs list
 
         // By default play first song
-        playSong();
+
 
         /**
          * Play button click event
@@ -99,27 +94,72 @@ artists=intent.getStringExtra("artists");
          * */
         btnPlay.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View arg0) {
-                // check for already playing
-                if(mp.isPlaying()){
-                    if(mp!=null){
-                        mp.pause();
-                        // Changing button image to play button
-                        btnPlay.setImageResource(R.drawable.plqay);
-                    }
-                }else{
-                    // Resume song
-                    if(mp!=null){
-                        mp.start();
-                        // Changing button image to pause button
-                        btnPlay.setImageResource(R.drawable.btn_pause);
-                    }
-                }
+                                       @Override
+                                       public void onClick(View arg0) {
+                                           // check for already playing
+                                           final ProgressDialog mDialog = new ProgressDialog(Main2Activity.this);
 
-            }
-        });
 
+                                           AsyncTask<String, String, String> mp3Play = new AsyncTask<String, String, String>() {
+
+                                               @Override
+                                               protected void onPreExecute() {
+                                                   mDialog.setMessage("Please wait");
+                                                   mDialog.show();
+                                               }
+
+                                               @Override
+                                               protected String doInBackground(String... params) {
+                                                   try {
+                                                       mp.setDataSource(params[0]);
+                                                       mp.prepare();
+                                                   } catch (Exception ex) {
+
+                                                   }
+                                                   return "";
+                                               }
+
+                                               @Override
+                                               protected void onPostExecute(String s) {
+                                                   if (!mp.isPlaying()) {
+                                                       mp.start();
+                                                       btnPlay.setImageResource(R.drawable.ic_pause);
+                                                   } else {
+                                                       mp.pause();
+                                                       btnPlay.setImageResource(R.drawable.ic_play);
+                                                   }
+
+                                                   updateProgressBar();
+                                                   mDialog.dismiss();
+                                               }
+                                           };
+
+                                           mp3Play.execute(url); // direct link mp3 file
+
+                                           mp.start();
+                                       }
+                                   });
+            //                if(mp.isPlaying()){
+//                    if(mp!=null){
+//                        mp.pause();
+//                        // Changing button image to play button
+//                        btnPlay.setImageResource(R.drawable.plqay);
+//                    }
+//                }else{
+//                    // Resume song
+//                    if(mp!=null){
+//                        mp.start();
+//                        // Changing button image to pause button
+//                        btnPlay.setImageResource(R.drawable.btn_pause);
+//                    }
+//                }
+
+        mp = new MediaPlayer();
+        utils = new Utilities();
+
+        // Listeners
+        songProgressBar.setOnSeekBarChangeListener(this); // Important
+        mp.setOnCompletionListener(this);
         /**
          * Forward button click event
          * Forwards song specified seconds
@@ -235,46 +275,77 @@ artists=intent.getStringExtra("artists");
      * Receiving song index from playlist view
      * and play the song
      * */
-    @Override
-    protected void onActivityResult(int requestCode,
-                                    int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == 100){
-            currentSongIndex = data.getExtras().getInt("songIndex");
-            // play selected song
-            playSong();
-        }
-
-    }
 
 
-    public void  playSong(){
-        // Play song
-        try {
-            mp.reset();
-            mp.setDataSource(url);
-            mp.prepare();
-            mp.start();
-            // Displaying Song title
-            songTitleLabel.setText(song);
+//    public void  playSong(){
+//        // Play song
+//        final ProgressDialog mDialog = new ProgressDialog(Main2Activity.this);
+//
+//
+//        AsyncTask<String, String, String> mp3Play = new AsyncTask<String, String, String>() {
+//
+//            @Override
+//            protected void onPreExecute() {
+//                mDialog.setMessage("Please wait");
+//                mDialog.show();
+//            }
+//
+//            @Override
+//            protected String doInBackground(String... params) {
+//                try {
+//                    mp.setDataSource(params[0]);
+//                    mp.prepare();
+//                } catch (Exception ex) {
+//
+//                }
+//                return "";
+//            }
+//
+//            @Override
+//            protected void onPostExecute(String s) {
+//                if (!mp.isPlaying()) {
+//                    mp.start();
+//                    btnPlay.setImageResource(R.drawable.ic_pause);
+//                } else {
+//                    mp.pause();
+//                    btnPlay.setImageResource(R.drawable.ic_play);
+//                }
+//                songProgressBar.setProgress(0);
+//                songProgressBar.setMax(100);
+//                updateProgressBar();
+//                mDialog.dismiss();
+//            }
+//        };
+//
+//        mp3Play.execute(url); // direct link mp3 file
+//
+//        mp.start();
+//    }
+//        try {
+//            mp.reset();
+//            mp.setDataSource(url);
+//            mp.prepare();
+//            mp.start();
+//            // Displaying Song title
+//            songTitleLabel.setText(song);
+//
+//            // Changing Button Image to pause image
+//            btnPlay.setImageResource(R.drawable.btn_pause);
+//
+//            // set Progress bar values
+//            songProgressBar.setProgress(0);
+//            songProgressBar.setMax(100);
+//
+//            // Updating progress bar
+//            updateProgressBar();
+//        } catch (IllegalArgumentException e) {
+//            e.printStackTrace();
+//        } catch (IllegalStateException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-            // Changing Button Image to pause image
-            btnPlay.setImageResource(R.drawable.btn_pause);
-
-            // set Progress bar values
-            songProgressBar.setProgress(0);
-            songProgressBar.setMax(100);
-
-            // Updating progress bar
-            updateProgressBar();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Update timer on seekbar
@@ -346,32 +417,33 @@ artists=intent.getStringExtra("artists");
      * */
     @Override
     public void onCompletion(MediaPlayer arg0) {
+        btnPlay.setImageResource(R.drawable.ic_play);
 
         // check for repeat is ON or OFF
-        if(isRepeat){
-            // repeat is on play same song again
-            playSong();
-        } else if(isShuffle){
-            // shuffle is on - play a random song
-            playSong();
-        } else{
-            // no repeat or shuffle ON - play next song
-                playSong();
-
-                // play first song
-
-        }
+//        if(isRepeat){
+//            // repeat is on play same song again
+//            playSong();
+//        } else if(isShuffle){
+//            // shuffle is on - play a random song
+//            playSong();
+//        } else{
+//            // no repeat or shuffle ON - play next song
+//                playSong();
+//
+//                // play first song
+//
+//        }
     }
 
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-       if(mp!=null)
-       {
-           if (mp.isPlaying()) {
-               mp.release();
-           }
-       }
-    }
+//    @Override
+//    public void onDestroy(){
+//        super.onDestroy();
+//       if(mp!=null)
+//       {
+//           if (mp.isPlaying()) {
+//               mp.release();
+//           }
+//       }
+//    }
 
 }
