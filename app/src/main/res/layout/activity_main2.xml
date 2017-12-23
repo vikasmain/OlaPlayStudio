@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <RelativeLayout
+    android:layout_height="match_parent"
+
+    android:layout_width="match_parent"
+    android:background="@android:color/holo_blue_light"
+    xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    android:id="@+id/imag"/>
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/songnm"
+    android:layout_below="@+id/imag"
+    android:textSize="17sp"
+    android:textStyle="bold"
+    android:layout_centerHorizontal="true"
+    android:textColor="@android:color/white"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/songnm2"
+        android:layout_below="@+id/songnm"
+        android:textSize="15sp"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:textColor="@android:color/white"/>
+    <RelativeLayout android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true">
+        <SeekBar android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/seekbar"
+            />
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/textTimer"
+        android:text="00:00"
+        android:textColor="@android:color/white"
+        android:layout_below="@+id/seekbar"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageButton android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/btn_play_pause"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_play"
+        android:layout_below="@id/textTimer"/>
+
+
+</RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Ola Play Studio</string>
+    <string name="pop"><![CDATA[&#8942;]]></string>
+    <string name="search_hint">Search by Song...</string>
+</resources>
