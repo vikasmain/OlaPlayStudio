@@ -22,60 +22,56 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
 @SuppressWarnings("deprecation")
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     // private static final String url = "http://192.168.56.1/albumfinal.json";
-SearchView searchView;
+    SearchView searchView;
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView recyclerView;
     private AlbumAdapter albumAdapter;
     RequestQueue queue;
     GridLayoutManager lLayout;
     //private String url="https://app-1486707345.000webhostapp.com/mrbean.json";
-    private ArrayList<Album> list=new ArrayList<>();
-//    private ArrayList<Currency> curr=new ArrayList<>();
+    private ArrayList<Album> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        recyclerView=(RecyclerView)findViewById(R.id.recyclerview);
-        list=new ArrayList<>();
-        albumAdapter=new AlbumAdapter(this,list);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        list = new ArrayList<>();
+        albumAdapter = new AlbumAdapter(this, list);
         lLayout = new GridLayoutManager(MainActivity.this, 2);
         recyclerView.setLayoutManager(lLayout);
         recyclerView.setAdapter(albumAdapter);
 
-        queue= AppController.getInstance().getRequestQueue();
+        queue = AppController.getInstance().getRequestQueue();
 
         preparealbums();
 
     }
 
-    public  void preparealbums()
-    {
-        String url="http://starlord.hackerearth.com/studio";
+    public void preparealbums() {
+        String url = "http://starlord.hackerearth.com/studio";
 
 
         JsonArrayRequest movieReq = new JsonArrayRequest(url,
-                new Response.Listener<JSONArray>()
-                {
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(JSONArray response)
-                    {
+                    public void onResponse(JSONArray response) {
                         Log.d(TAG, response.toString());
 
 
                         // Parsing(manipulating) json because data we are getting before it is unstructured so we will get them
                         //using perfect key value pairs
                         for (int i = 0; i < response.length(); i++) {
-                            try
-                            {
+                            try {
                                 JSONObject obj = response.getJSONObject(i);
-                                Album movie = new Album(obj.getString("song"),obj.getString("url"),
-                                        obj.getString("artists"),obj.getString("cover_image"));
+                                Album movie = new Album(obj.getString("song"), obj.getString("url"),
+                                        obj.getString("artists"), obj.getString("cover_image"));
 
 
 
@@ -86,10 +82,10 @@ SearchView searchView;
                                     genre.add((String) genreArry.get(j));
                                 }
                                 movie.setGenre(genre);
-                             */   list.add(movie);
+                             */
+                                list.add(movie);
 
-                            }
-                            catch (JSONException e) {
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -113,44 +109,15 @@ SearchView searchView;
     }
 
 
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main,menu);
-        MenuItem menuItem=menu.findItem(R.id.action_search);
-        SearchView searchView= (SearchView) MenuItemCompat.getActionView(menuItem);
+        getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
         searchView.setQueryHint("Search Song name");
         searchView.setOnQueryTextListener(this);
-//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        searchView = (SearchView) menu.findItem(R.id.action_search)
-//                .getActionView();
-//        searchView.setSearchableInfo(searchManager
-//                .getSearchableInfo(getComponentName()));
-//        searchView.setMaxWidth(Integer.MAX_VALUE);
-//
-//        // listening to search query text change
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                // filter recycler view when query submitted
-//                albumAdapter.getFilter().filter(query);
-//
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String query) {
-//                // filter recycler view when text is changed
-//                albumAdapter.getFilter().filter(query);
-//                return false;
-//            }
-//        });
         return true;
     }
-
-
 
 
     @Override
@@ -160,13 +127,14 @@ SearchView searchView;
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        newText=newText.toLowerCase();
-        ArrayList<Album> arrayListp=new ArrayList<>();
-        for(Album album:list){
-            String name=album.getSong().toLowerCase();
-            if(name.contains(newText))
+        newText = newText.toLowerCase();
+        ArrayList<Album> arrayListp = new ArrayList<>();
+        for (Album album : list) {
+            String name = album.getSong().toLowerCase();
+            if (name.contains(newText))
                 arrayListp.add(album);
         }
         albumAdapter.setfilter(arrayListp);
-        return true;    }
+        return true;
+    }
 }
