@@ -39,41 +39,45 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * Created by dell on 12/30/2016.
  */
-public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback{
-      Context context;
+public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder> implements ActivityCompat.OnRequestPermissionsResultCallback {
+    Context context;
     private static final int EXTERNAL_STORAGE_PERMISSION_CONSTANT = 100;
     private static final int REQUEST_PERMISSION_SETTING = 101;
     private boolean sentToSettings = false;
     private SharedPreferences permissionStatus;
-    String name,song;
+    String name, song;
     DownloadManager downloadManager;
-      ArrayList<Album> albumList=new ArrayList<>();
-    List<Album> contactListFiltered=new ArrayList<>();
+    ArrayList<Album> albumList = new ArrayList<>();
+    List<Album> contactListFiltered = new ArrayList<>();
     ImageButton buttonViewOption;
-public class MyViewHolder extends RecyclerView.ViewHolder  {
-          public TextView gl,g2;
-          ImageView imageView;
-          MediaPlayer mediaPlayer;
-          ArrayList<Album> albumList=new ArrayList<>();
-public MyViewHolder(View itemView) {
-          super(itemView);
-          this.albumList = albumList;
 
-          gl = (TextView) itemView.findViewById(R.id.goi);
-          g2 = (TextView) itemView.findViewById(R.id.goi2);
-          buttonViewOption =(ImageButton) itemView.findViewById(R.id.textViewOptions);
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView gl, g2;
+        ImageView imageView;
+        MediaPlayer mediaPlayer;
+        ArrayList<Album> albumList = new ArrayList<>();
 
-         imageView =(ImageView) itemView.findViewById(R.id.image);
-      }
+        public MyViewHolder(View itemView) {
+            super(itemView);
+            this.albumList = albumList;
 
-  }
-    public AlbumAdapter(Context context, ArrayList<Album> albumList){
-        this.context=context;
-        this.albumList=albumList;
-        this.contactListFiltered=albumList;
+            gl = (TextView) itemView.findViewById(R.id.goi);
+            g2 = (TextView) itemView.findViewById(R.id.goi2);
+            buttonViewOption = (ImageButton) itemView.findViewById(R.id.textViewOptions);
+
+            imageView = (ImageView) itemView.findViewById(R.id.image);
+        }
+
     }
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewtype){
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.album_card,parent,false);
+
+    public AlbumAdapter(Context context, ArrayList<Album> albumList) {
+        this.context = context;
+        this.albumList = albumList;
+        this.contactListFiltered = albumList;
+    }
+
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewtype) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.album_card, parent, false);
 
         return new MyViewHolder(view);
     }
@@ -81,18 +85,18 @@ public MyViewHolder(View itemView) {
 
     @Override
     public void onBindViewHolder(final AlbumAdapter.MyViewHolder holder, final int position) {
-       final Album album = albumList.get(position);
-       ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-        permissionStatus = context.getSharedPreferences("permissionStatus",MODE_PRIVATE);
+        final Album album = albumList.get(position);
+        ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+        permissionStatus = context.getSharedPreferences("permissionStatus", MODE_PRIVATE);
         if (imageLoader == null)
             imageLoader = AppController.getInstance().getImageLoader();
-       //        if (holder.imageLoader == null)
+        //        if (holder.imageLoader == null)
 //            holder.imageLoader = AppController.getInstance().getImageLoader();
 //        holder.thumbnail.setImageUrl(album.getFlag(),holder.imageLoader);
         holder.gl.setText(album.getSong());
-        holder.g2.setText("Artists: "+album.getArtists());
-        name=album.getUrl();
-        song=album.getSong();
+        holder.g2.setText("Artists: " + album.getArtists());
+        name = album.getUrl();
+        song = album.getSong();
         Glide.with(context).load(album.getCover_image()).into(holder.imageView);
 
         buttonViewOption.setOnClickListener(new View.OnClickListener() {
@@ -110,11 +114,11 @@ public MyViewHolder(View itemView) {
                             case R.id.menu1:
                                 final Album album2 = albumList.get(position);
 
-                                Intent intent=new Intent(context,Main2Activity.class);
-                                intent.putExtra("url",album2.getUrl());
-                                intent.putExtra("image",album2.getCover_image());
-                                intent.putExtra("song",album2.getSong());
-                                intent.putExtra("artists",album2.getArtists());
+                                Intent intent = new Intent(context, Main2Activity.class);
+                                intent.putExtra("url", album2.getUrl());
+                                intent.putExtra("image", album2.getCover_image());
+                                intent.putExtra("song", album2.getSong());
+                                intent.putExtra("artists", album2.getArtists());
                                 context.startActivity(intent);
                                 break;
                             case R.id.menu2:
@@ -138,7 +142,7 @@ public MyViewHolder(View itemView) {
                                             }
                                         });
                                         builder.show();
-                                    } else if (permissionStatus.getBoolean(Manifest.permission.WRITE_EXTERNAL_STORAGE,false)) {
+                                    } else if (permissionStatus.getBoolean(Manifest.permission.WRITE_EXTERNAL_STORAGE, false)) {
                                         //Previously Permission Request was cancelled with 'Dont Ask Again',
                                         // Redirect to Settings after showing Information about why you need the permission
                                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -152,7 +156,7 @@ public MyViewHolder(View itemView) {
                                                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                                                 Uri uri = Uri.fromParts("package", context.getPackageName(), null);
                                                 intent.setData(uri);
-                                                ((Activity)context).startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+                                                ((Activity) context).startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
                                                 Toast.makeText(context, "Go to Permissions to Grant Storage", Toast.LENGTH_LONG).show();
                                             }
                                         });
@@ -163,18 +167,15 @@ public MyViewHolder(View itemView) {
                                             }
                                         });
                                         builder.show();
-                                    }
-                                    else {
+                                    } else {
                                         //just request the permission
                                         ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, EXTERNAL_STORAGE_PERMISSION_CONSTANT);
                                     }
 
 
                                     SharedPreferences.Editor editor = permissionStatus.edit();
-                                    editor.putBoolean(Manifest.permission.WRITE_EXTERNAL_STORAGE,true);
+                                    editor.putBoolean(Manifest.permission.WRITE_EXTERNAL_STORAGE, true);
                                     editor.commit();
-
-
 
 
                                 } else {
@@ -182,7 +183,7 @@ public MyViewHolder(View itemView) {
                                     proceedAfterPermission();
                                 }
 
-                              break;
+                                break;
 
                             case R.id.menu3:
                                 try {
@@ -191,12 +192,12 @@ public MyViewHolder(View itemView) {
 
                                     i.putExtra(Intent.EXTRA_TEXT, album.getUrl());
                                     context.startActivity(Intent.createChooser(i, "Choose one"));
-                                } catch(Exception e) {
+                                } catch (Exception e) {
                                     //e.toString();
                                 }
 
                                 break;
-                    }
+                        }
 
                         return false;
                     }
@@ -208,7 +209,6 @@ public MyViewHolder(View itemView) {
         });
 
 
-
     }
 
     public void proceedAfterPermission() {
@@ -216,16 +216,17 @@ public MyViewHolder(View itemView) {
         Toast.makeText(context, "Downloading", Toast.LENGTH_SHORT).show();
         downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(name);
-        String nameoffile= URLUtil.guessFileName(name,null, MimeTypeMap.getFileExtensionFromUrl(name));
+        String nameoffile = URLUtil.guessFileName(name, null, MimeTypeMap.getFileExtensionFromUrl(name));
         DownloadManager.Request request = new DownloadManager.Request(uri);
         request.setTitle(song);
         request.setDescription("Thanks for Downloading");
         request.allowScanningByMediaScanner();
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,nameoffile);
-        DownloadManager manager=(DownloadManager)context.getSystemService(Context.DOWNLOAD_SERVICE);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, nameoffile);
+        DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == EXTERNAL_STORAGE_PERMISSION_CONSTANT) {
@@ -257,13 +258,11 @@ public MyViewHolder(View itemView) {
                     });
                     builder.show();
                 } else {
-                    Toast.makeText(context,"Unable to get Permission",Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Unable to get Permission", Toast.LENGTH_LONG).show();
                 }
             }
         }
     }
-
-
 
 
     @Override
@@ -271,7 +270,7 @@ public MyViewHolder(View itemView) {
         return albumList.size();
     }
 
-//    @Override
+    //    @Override
 //    public Filter getFilter() {
 //        return new Filter() {
 //            @Override
@@ -305,11 +304,11 @@ public MyViewHolder(View itemView) {
 //            }
 //        };
 //    }
-    public void setfilter(ArrayList<Album> newlist){
-    albumList=new ArrayList<>();
-    albumList.addAll(newlist);
-    notifyDataSetChanged();
-}
+    public void setfilter(ArrayList<Album> newlist) {
+        albumList = new ArrayList<>();
+        albumList.addAll(newlist);
+        notifyDataSetChanged();
+    }
 
 }
 

@@ -5,18 +5,16 @@ package com.olaapp;
  */
 public class Album {
 
-String song,url,artists,cover_image;
-
+    String song, url, artists, cover_image;
 
 
     public Album(String song, String url,
 
-                 String artists, String cover_image)
-    {
-        this.song=song;
-        this.url=url;
-        this.artists=artists;
-        this.cover_image=cover_image;
+                 String artists, String cover_image) {
+        this.song = song;
+        this.url = url;
+        this.artists = artists;
+        this.cover_image = cover_image;
 
     }
 
